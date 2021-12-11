@@ -12,6 +12,8 @@ platforms:
       - name: zabbix
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - agent
 
 provisioner:
   name: ansible

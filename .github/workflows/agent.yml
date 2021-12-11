@@ -20,27 +20,34 @@ jobs:
       fail-fast: false
       matrix:
         molecule_distro:
-          - container: centos
+          - container: centos8
             image: geerlingguy/docker-centos8-ansible:latest
-          - container: centos
+          - container: centos7
             image: geerlingguy/docker-centos7-ansible:latest
           - container: fedora32
             image: geerlingguy/docker-fedora32-ansible:latest
-          - container: ubuntu
+          - container: ubuntu2004
             image: geerlingguy/docker-ubuntu2004-ansible
-          - container: pgsql-ubuntu
+          - container: pgsql-ubuntu1804
             image: geerlingguy/docker-ubuntu1804-ansible
-          - container: debian
+          - container: debian10
             image: geerlingguy/docker-debian10-ansible
-          - container: debian
+          - container: debian9
             image: geerlingguy/docker-debian9-ansible
-          - container: debian
+          - container: debian8
             image: geerlingguy/docker-debian8-ansible
         scenario_name:
           - default
           - autopsk
           - agent2
           - agent2autopsk
+        exclude: # zabbix-agent2 is not supported on debian8
+          - molecule_distro:
+              container: debian8
+            scenario_name: agent2
+          - molecule_distro:
+              container: debian8
+            scenario_name: agent2autopsk
 
     steps:
       - name: Check out code
@@ -65,7 +72,7 @@ jobs:
         run: ansible-galaxy collection install $COLLECTION_FILE
 
       - name: Run role tests
-        working-directory: molecule/zabbix_agent
+        working-directory: molecule/zabbix_agent_tests
         run: >-
           MY_MOLECULE_CONTAINER=${{ matrix.molecule_distro.container }}
           MY_MOLECULE_IMAGE=${{ matrix.molecule_distro.image }}
